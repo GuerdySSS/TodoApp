@@ -58,39 +58,26 @@ export default {
           let btnActive = document.getElementsByClassName('app__wrapper__todo-item__ended')[i]
           text.classList.toggle('app__wrapper__todo-item__text_active')
           btnActive.classList.toggle('app__wrapper__todo-item__ended_active')
-          this.todos[i].active = true
+          this.todos[i].active == false ? this.todos[i].active = true : this.todos[i].active = false
         }
       })
     },
     filter(x) {
+      let activeBtn = false
       for(let i=0; i<3; i++)
         document.getElementsByClassName('app__wrapper__todo-item__btn')[i].classList.remove('app__wrapper__todo-item__btn_active')
       let btn = document.getElementsByClassName('app__wrapper__todo-item__btn')[x]
       btn.classList.add('app__wrapper__todo-item__btn_active')
 
-      if (x == 0) {
-        this.todos.forEach((el, i) => {
-          document.getElementsByClassName('app__wrapper__todo-item')[i].style.display = 'flex'
-        })
-      }
+      this.todos.forEach((el, i) => {
+        document.getElementsByClassName('app__wrapper__todo-item')[i].style.display = 'flex'
+      })
 
-      if (x == 1) {
-        this.todos.forEach((el, i) => {
-          document.getElementsByClassName('app__wrapper__todo-item')[i].style.display = 'flex'
-        })
-        this.todos.forEach((el, i) => {
-          if (el.active == true) {
-            document.getElementsByClassName('app__wrapper__todo-item')[i].style.display = 'none'
-          }
-        })
-      }
+      if (x != 0) {
+        x == 1 ? activeBtn = true : activeBtn = false
 
-      if (x == 2) {
         this.todos.forEach((el, i) => {
-          document.getElementsByClassName('app__wrapper__todo-item')[i].style.display = 'flex'
-        })
-        this.todos.forEach((el, i) => {
-          if (el.active == false) {
+          if (el.active == activeBtn) {
             document.getElementsByClassName('app__wrapper__todo-item')[i].style.display = 'none'
           }
         })
@@ -123,20 +110,20 @@ export default {
     width: 100%;
     height: 100%;
     background-color: #e0e0e0;
+    user-select: none;
     &__header {
       font-size: 70px;
       text-align: center;
       color: #bcaaa4;
-      font-weight: 100;
     }
     &__wrapper {
       background: white;
-      width: 700px;
+      max-width: 700px;
       margin: 0 auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
       &__input {
         border: none;
-        width: 700px;
+        width: 100%;
         height: 60px;
         padding: 0px 30px;
         font-size: 20px;
@@ -160,7 +147,7 @@ export default {
           width: 540px;
           &_active {
             text-decoration: line-through;
-            color: #90a4ae;
+            color: #cfd8dc;
           }
         }
         &__delete {
@@ -175,12 +162,12 @@ export default {
           height: 40px;
           width: 40px;
           border-radius: 50%;
-          border: 2px solid #43a047;
+          border: 1px solid #bcaaa4;
           text-align: center;
+          color: white;
           
           &_active {
-            background-color: #43a047;
-            color: white;
+            color: #43a047;
           }
         }
         &__filter {
@@ -197,7 +184,6 @@ export default {
           background-color: white;
           border: none;
           border: 1px solid white;
-          outline: none;
           font-size: 20px;
           &:last-child {
             margin-right: 0px;

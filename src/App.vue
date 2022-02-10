@@ -6,8 +6,8 @@
       <div v-if="todos.length < 1" class="app__wrapper__empty">Нет никаких задач</div>
       <div v-else class="app__wrapper__todo-list">
         <div class="app__wrapper__todo-item" v-for="toDo in todos" :key="toDo.id">
-          <div class="app__wrapper__todo-item__ended" @click="endedToDo(toDo.id)">&#10004;</div>
-          <div class="app__wrapper__todo-item__text">{{toDo.message}}</div>
+          <div class="app__wrapper__todo-item__ended" :class="{'app__wrapper__todo-item__ended_active':toDo.active == true}" @click="endedToDo(toDo.id)">&#10004;</div>
+          <div class="app__wrapper__todo-item__text" :class="{'app__wrapper__todo-item__text_active':toDo.active == true}">{{toDo.message}}</div>
           <div class="app__wrapper__todo-item__delete" @click="deleteItem(toDo.id)">&times;</div>
         </div>
         <div class="app__wrapper__todo-item app__wrapper__footer">
@@ -34,53 +34,65 @@ export default {
       todos: []
     }
   },
+  mounted() {
+    if (localStorage.getItem('todos')) {
+      this.todos = JSON.parse(localStorage.getItem('todos'));
+    }
+  },
   methods: {
     addTodo() {
       if (this.todo) {
         this.todos.push({
-        message: this.todo,
-        active: false,
-        id: Date.now().toString()
-      })
-      this.todo = ''
+          message: this.todo,
+          active: false,
+          id: Date.now().toString()
+        })
+        this.todo = ''
       }
+      let parsed = JSON.stringify(this.todos);
+      localStorage.setItem('todos', parsed);
     },
     deleteItem(index) {
       this.todos.forEach((el, i) => {
         if (el.id == index)
           this.todos.splice(i, 1)
       })
+      let parsed = JSON.stringify(this.todos);
+      localStorage.setItem('todos', parsed);
     },
     endedToDo(index) {
       this.todos.forEach((el, i) => {
         if (el.id == index) {
-          let text = document.getElementsByClassName('app__wrapper__todo-item__text')[i]
-          let btnActive = document.getElementsByClassName('app__wrapper__todo-item__ended')[i]
-          text.classList.toggle('app__wrapper__todo-item__text_active')
-          btnActive.classList.toggle('app__wrapper__todo-item__ended_active')
           this.todos[i].active == false ? this.todos[i].active = true : this.todos[i].active = false
+
+          let parsed = JSON.stringify(this.todos);
+          localStorage.setItem('todos', parsed);
         }
       })
     },
     filter(x) {
+      this.todos = JSON.parse(localStorage.getItem('todos'));
       let activeBtn = false
-      for(let i=0; i<3; i++)
+      for (let i=0; i<3; i++)
         document.getElementsByClassName('app__wrapper__todo-item__btn')[i].classList.remove('app__wrapper__todo-item__btn_active')
-      let btn = document.getElementsByClassName('app__wrapper__todo-item__btn')[x]
-      btn.classList.add('app__wrapper__todo-item__btn_active')
-
-      this.todos.forEach((el, i) => {
-        document.getElementsByClassName('app__wrapper__todo-item')[i].style.display = 'flex'
-      })
+      document.getElementsByClassName('app__wrapper__todo-item__btn')[x].classList.add('app__wrapper__todo-item__btn_active')
 
       if (x != 0) {
         x == 1 ? activeBtn = true : activeBtn = false
 
-        this.todos.forEach((el, i) => {
-          if (el.active == activeBtn) {
-            document.getElementsByClassName('app__wrapper__todo-item')[i].style.display = 'none'
+        for (let i=0; i<this.todos.length; i++) {
+          if (this.todos[i].active == activeBtn) {
+            this.todos.splice(i, 1)
+            i--
+            console.log(this.todos[i].active)
           }
-        })
+        }
+        // this.todos.forEach((el, i) => {
+        //   if (el.active == activeBtn) {
+        //     this.todos.splice(i, 1)
+        //     console.log(this.todos[i].message)
+        //   }
+        // })
       }
     },
     clear() {
@@ -88,6 +100,8 @@ export default {
         if (el.active == true)
           this.todos.splice(i, 1)
       })
+      let parsed = JSON.stringify(this.todos)
+      localStorage.setItem('todos', parsed)
     },
   }
 }
@@ -108,7 +122,7 @@ export default {
   }
   .app {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     background-color: #e0e0e0;
     user-select: none;
     &__header {

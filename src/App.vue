@@ -36,7 +36,7 @@ export default {
   },
   mounted() {
     if (localStorage.getItem('todos')) {
-      this.todos = JSON.parse(localStorage.getItem('todos'));
+      this.todos = JSON.parse(localStorage.getItem('todos'))
     }
   },
   methods: {
@@ -49,29 +49,22 @@ export default {
         })
         this.todo = ''
       }
-      let parsed = JSON.stringify(this.todos);
-      localStorage.setItem('todos', parsed);
+      localStorage.setItem('todos', JSON.stringify(this.todos))
     },
     deleteItem(index) {
-      this.todos.forEach((el, i) => {
-        if (el.id == index)
-          this.todos.splice(i, 1)
-      })
-      let parsed = JSON.stringify(this.todos);
-      localStorage.setItem('todos', parsed);
+      this.todos = this.todos.filter(el => el.id != index)
+      localStorage.setItem('todos', JSON.stringify(this.todos))
     },
     endedToDo(index) {
       this.todos.forEach((el, i) => {
         if (el.id == index) {
           this.todos[i].active == false ? this.todos[i].active = true : this.todos[i].active = false
-
-          let parsed = JSON.stringify(this.todos);
-          localStorage.setItem('todos', parsed);
+          localStorage.setItem('todos', JSON.stringify(this.todos))
         }
       })
     },
     filter(x) {
-      this.todos = JSON.parse(localStorage.getItem('todos'));
+      this.todos = JSON.parse(localStorage.getItem('todos'))
       let activeBtn = false
       for (let i=0; i<3; i++)
         document.getElementsByClassName('app__wrapper__todo-item__btn')[i].classList.remove('app__wrapper__todo-item__btn_active')
@@ -79,29 +72,13 @@ export default {
 
       if (x != 0) {
         x == 1 ? activeBtn = true : activeBtn = false
-
-        for (let i=0; i<this.todos.length; i++) {
-          if (this.todos[i].active == activeBtn) {
-            this.todos.splice(i, 1)
-            i--
-            console.log(this.todos[i].active)
-          }
-        }
-        // this.todos.forEach((el, i) => {
-        //   if (el.active == activeBtn) {
-        //     this.todos.splice(i, 1)
-        //     console.log(this.todos[i].message)
-        //   }
-        // })
+        this.todos = this.todos.filter(el => el.active != activeBtn)
       }
     },
     clear() {
-      this.todos.forEach((el, i) => {
-        if (el.active == true)
-          this.todos.splice(i, 1)
-      })
-      let parsed = JSON.stringify(this.todos)
-      localStorage.setItem('todos', parsed)
+      document.getElementsByClassName('app__wrapper__todo-item__btn')[0].classList.add('app__wrapper__todo-item__btn_active')
+      this.todos = this.todos.filter(el => el.active == false)
+      localStorage.setItem('todos', JSON.stringify(this.todos))
     },
   }
 }
@@ -125,16 +102,19 @@ export default {
     min-height: 100%;
     background-color: #e0e0e0;
     user-select: none;
+
     &__header {
       font-size: 70px;
       text-align: center;
       color: #bcaaa4;
     }
+
     &__wrapper {
       background: white;
       max-width: 700px;
       margin: 0 auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
       &__input {
         border: none;
         width: 100%;
@@ -144,32 +124,39 @@ export default {
         border-bottom: 1px solid #bcaaa4;
         outline: none;
         color: #616161;
+
         &::placeholder {
           font-style: italic;
         }
       }
+
       &__empty {
         @include todos;
         text-align: center;
         padding: 17px 30px;
       }
+
       &__todo-item {
         @include todos;
         display: flex;
+
         &__text {
           position: relative;
           width: 540px;
+
           &_active {
             text-decoration: line-through;
             color: #cfd8dc;
           }
         }
+
         &__delete {
           color: #bcaaa4;
           margin-left: auto;
           cursor: pointer;
           font-size: 35px;
         }
+        
         &__ended {
           margin-right: 20px;
           cursor: pointer;
@@ -184,12 +171,14 @@ export default {
             color: #43a047;
           }
         }
+
         &__filter {
           display: flex;
           margin-left: auto;
           margin-right: auto;
           align-items: center;
         }
+
         &__btn {
           margin-right: 20px;
           cursor: pointer;
@@ -199,13 +188,16 @@ export default {
           border: none;
           border: 1px solid white;
           font-size: 20px;
+
           &:last-child {
             margin-right: 0px;
           }
+
           &_active {
             border-color: #616161;
           }
         }
+
         &__link {
           cursor: pointer;
           
@@ -214,6 +206,7 @@ export default {
           }
         }
       }
+
       &__footer {
         font-size: 20px;
       }

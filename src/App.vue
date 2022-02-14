@@ -31,7 +31,8 @@ export default {
   data() {
     return {
       todo: '',
-      todos: []
+      todos: [],
+      activeFilter: 0
     }
   },
   mounted() {
@@ -48,8 +49,16 @@ export default {
           id: Date.now().toString()
         })
         this.todo = ''
+        if (this.activeFilter == 1) {
+          this.todos = JSON.parse(localStorage.getItem('todos'))
+          this.todos = this.todos.filter(el => el.active != true)
+        }
+        else if (this.activeFilter == 2) {
+          this.todos = JSON.parse(localStorage.getItem('todos'))
+          this.todos = this.todos.filter(el => el.active != false)
+        }
+        localStorage.setItem('todos', JSON.stringify(this.todos))
       }
-      localStorage.setItem('todos', JSON.stringify(this.todos))
     },
     deleteItem(index) {
       this.todos = this.todos.filter(el => el.id != index)
@@ -70,13 +79,22 @@ export default {
         document.getElementsByClassName('app__wrapper__todo-item__btn')[i].classList.remove('app__wrapper__todo-item__btn_active')
       document.getElementsByClassName('app__wrapper__todo-item__btn')[x].classList.add('app__wrapper__todo-item__btn_active')
 
-      if (x != 0) {
-        x == 1 ? activeBtn = true : activeBtn = false
+      if (x == 1) {
+        activeBtn = true
+        this.activeFilter = 1
+        this.todos = this.todos.filter(el => el.active != activeBtn)
+      }
+      else if (x == 2) {
+        activeBtn = false
+        this.activeFilter = 2
         this.todos = this.todos.filter(el => el.active != activeBtn)
       }
     },
     clear() {
+      for (let i=0; i<3; i++)
+        document.getElementsByClassName('app__wrapper__todo-item__btn')[i].classList.remove('app__wrapper__todo-item__btn_active')
       document.getElementsByClassName('app__wrapper__todo-item__btn')[0].classList.add('app__wrapper__todo-item__btn_active')
+      this.todos = JSON.parse(localStorage.getItem('todos'))
       this.todos = this.todos.filter(el => el.active == false)
       localStorage.setItem('todos', JSON.stringify(this.todos))
     },

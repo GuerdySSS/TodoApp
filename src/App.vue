@@ -13,9 +13,9 @@
         <div class="app__wrapper__todo-item app__wrapper__footer">
           <div class="app__wrapper__todo-item__count">{{todos.length}} items left</div>
           <div class="app__wrapper__todo-item__filter">
-            <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == 0}" @click="filter(0)">All</button>
-            <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == 1}" :disabled="!todos.some(el => el.active == false)" @click="filter(1)">Active</button>
-            <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == 2}" :disabled="!todos.some(el => el.active == true)" @click="filter(2)">Completed</button>
+            <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == ''}" @click="filter(0)">All</button>
+            <button class="app__wrapper__todo-item__btn" :disabled='dis2' :class="{'app__wrapper__todo-item__btn_active':activeFilter == false}" @click="filter(1)">Active</button>
+            <button class="app__wrapper__todo-item__btn" :disabled='dis' :class="{'app__wrapper__todo-item__btn_active':activeFilter == true}" @click="filter(2)">Completed</button>
           </div>
           <a class="app__wrapper__todo-item__link" @click="clear">Clear completed</a>
         </div>
@@ -32,7 +32,9 @@ export default {
     return {
       todo: '',
       todos: [],
-      activeFilter: 0
+      activeFilter: '',
+      dis: false,
+      dis2: false
     }
   },
   mounted() {
@@ -51,32 +53,29 @@ export default {
         })
         this.todo = ''
         localStorage.setItem('todos', JSON.stringify(this.todos))
-        if (this.activeFilter == 1) {
-          this.todos = this.todos.filter(el => el.active == false)
-        }
-        else if (this.activeFilter == 2) {
-          this.todos = this.todos.filter(el => el.active == true)
-        }
+        // if (this.activeFilter == 1) this.todos = this.todos.filter(el => el.active == false)
+        // else if (this.activeFilter == 2) this.todos = this.todos.filter(el => el.active == true)
+        this.todos = this.todos.filter(el => el.active == this.activeFilter)
       }
     },
     deleteItem(index) {
       this.todos = JSON.parse(localStorage.getItem('todos'))
       this.todos = this.todos.filter(el => el.id != index)
       localStorage.setItem('todos', JSON.stringify(this.todos))
-      if (this.activeFilter == 1) {
-        this.todos = this.todos.filter(el => el.active == false)
-        if (this.todos.length == 0) {
-          this.todos = JSON.parse(localStorage.getItem('todos'))
-          this.activeFilter = 0
-        }
-      }
-      else if (this.activeFilter == 2) {
-        this.todos = this.todos.filter(el => el.active == true)
-        if (this.todos.length == 0) {
-          this.activeFilter = 0
-          this.todos = JSON.parse(localStorage.getItem('todos'))
-        }
-      }
+      // if (this.activeFilter == 1) {
+      //   this.todos = this.todos.filter(el => el.active == false)
+      //   if (this.todos.length == 0) {
+      //     this.todos = JSON.parse(localStorage.getItem('todos'))
+      //     this.activeFilter = 0
+      //   }
+      // }
+      // else if (this.activeFilter == 2) {
+      //   this.todos = this.todos.filter(el => el.active == true)
+      //   if (this.todos.length == 0) {
+      //     this.activeFilter = 0
+      //     this.todos = JSON.parse(localStorage.getItem('todos'))
+      //   }
+      // }
     },
     endedToDo(index) {
       this.todos = JSON.parse(localStorage.getItem('todos'))
@@ -85,42 +84,49 @@ export default {
           this.todos[i].active == false ? this.todos[i].active = true : this.todos[i].active = false
           localStorage.setItem('todos', JSON.stringify(this.todos))
 
-          if (this.activeFilter == 1) {
-            this.todos = this.todos.filter(el => el.active == false)
-            if (this.todos.length == 0) {
-              this.todos = JSON.parse(localStorage.getItem('todos'))
-              this.activeFilter = 0
-            }
-          }
-          else if (this.activeFilter == 2) {
-            this.todos = this.todos.filter(el => el.active == true)
-            if (this.todos.length == 0) {
-              this.todos = JSON.parse(localStorage.getItem('todos'))
-              this.activeFilter = 0
-            }
-          }
+          // if (this.activeFilter == 1) {
+          //   this.todos = this.todos.filter(el => el.active == false)
+          //   if (this.todos.length == 0) {
+          //     this.todos = JSON.parse(localStorage.getItem('todos'))
+          //     this.activeFilter = 0
+          //   }
+          // }
+          // else if (this.activeFilter == 2) {
+          //   this.todos = this.todos.filter(el => el.active == true)
+          //   if (this.todos.length == 0) {
+          //     this.todos = JSON.parse(localStorage.getItem('todos'))
+          //     this.activeFilter = 0
+          //   }
+          // }
         }
       })
+      // if (this.todos.find(el => el.active == true))
+      //   this.dis = false
+      // else this.dis = true
+
+      // if (this.todos.find(el => el.active == false))
+      //   this.dis2 = false
+      // else this.dis2 = true
     },
     filter(x) {
       this.todos = JSON.parse(localStorage.getItem('todos'))
       let activeBtn = false
 
-      this.activeFilter = 0
+      this.activeFilter = ''
       if (x != 0) {
         if (x == 1) {
-          this.activeFilter = 1
+          this.activeFilter = false
           activeBtn = true
         } else if (x == 2) {
           activeBtn = false
-          this.activeFilter = 2
+          this.activeFilter = true
         }
         this.todos = this.todos.filter(el => el.active != activeBtn)
       }
     },
     clear() {
-      if (this.activeFilter == 2)
-        this.activeFilter = 0
+      if (this.activeFilter == true)
+        this.activeFilter = ''
       this.todos = JSON.parse(localStorage.getItem('todos'))
       this.todos = this.todos.filter(el => el.active == false)
       localStorage.setItem('todos', JSON.stringify(this.todos))

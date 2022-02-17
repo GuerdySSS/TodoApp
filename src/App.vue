@@ -10,15 +10,15 @@
           <div class="app__wrapper__todo-item__text" :class="{'app__wrapper__todo-item__text_active':toDo.active == true}">{{toDo.message}}</div>
           <div class="app__wrapper__todo-item__delete" @click="deleteItem(toDo.id)">&times;</div>
         </div>
-        <div class="app__wrapper__todo-item app__wrapper__footer">
-          <div class="app__wrapper__todo-item__count">{{todos.length}} items left</div>
-          <div class="app__wrapper__todo-item__filter">
-            <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == ''}" @click="filter(0)">All</button>
-            <button class="app__wrapper__todo-item__btn" :disabled='dis2' :class="{'app__wrapper__todo-item__btn_active':activeFilter == false}" @click="filter(1)">Active</button>
-            <button class="app__wrapper__todo-item__btn" :disabled='dis' :class="{'app__wrapper__todo-item__btn_active':activeFilter == true}" @click="filter(2)">Completed</button>
-          </div>
-          <a class="app__wrapper__todo-item__link" @click="clear">Clear completed</a>
+      </div>
+      <div v-if="todos.length > 0" class="app__wrapper__todo-item app__wrapper__footer">
+        <div class="app__wrapper__todo-item__count">{{todos.length}} items left</div>
+        <div class="app__wrapper__todo-item__filter">
+          <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == 321}" @click="changeBtn(0)">All</button>
+          <button class="app__wrapper__todo-item__btn"  :class="{'app__wrapper__todo-item__btn_active':activeFilter == false, 'app__wrapper__todo-item__btn_disabled':dis2 == true}" @click="changeBtn(1)">Active</button>
+          <button class="app__wrapper__todo-item__btn"  :class="{'app__wrapper__todo-item__btn_active':activeFilter == true, 'app__wrapper__todo-item__btn_disabled':dis == true}" @click="changeBtn(2)">Completed</button>
         </div>
+        <button class="app__wrapper__todo-item__btn app__wrapper__todo-item__btn__clear" :class="{'app__wrapper__todo-item__btn_disabled':dis == true}" @click="clear">Clear completed</button>
       </div>
     </div>
   </div>
@@ -32,20 +32,22 @@ export default {
     return {
       todo: '',
       todos: [],
-      activeFilter: '',
+      activeFilter: 321,
       dis: false,
       dis2: false
     }
   },
+
   mounted() {
-    if (localStorage.getItem('todos')) {
-      this.todos = JSON.parse(localStorage.getItem('todos'))
-    }
+    if (localStorage.getItem('dis')) this.dis = localStorage.getItem('dis')
+    if (localStorage.getItem('dis2')) this.dis2 = localStorage.getItem('dis2')
+    if (localStorage.getItem('todos')) this.todos = JSON.parse(localStorage.getItem('todos'))
   },
+
   methods: {
     addTodo() {
       if (this.todo) {
-        this.todos = JSON.parse(localStorage.getItem('todos'))
+        if (localStorage.getItem('todos')) this.todos = JSON.parse(localStorage.getItem('todos'))
         this.todos.push({
           message: this.todo,
           active: false,
@@ -53,82 +55,76 @@ export default {
         })
         this.todo = ''
         localStorage.setItem('todos', JSON.stringify(this.todos))
-        // if (this.activeFilter == 1) this.todos = this.todos.filter(el => el.active == false)
-        // else if (this.activeFilter == 2) this.todos = this.todos.filter(el => el.active == true)
-        this.todos = this.todos.filter(el => el.active == this.activeFilter)
+        if (this.todos.find(el => el.active == true)) this.dis = false
+        else this.dis = true
+        if (this.todos.find(el => el.active == false)) this.dis2 = false
+        else this.dis2 = true
+        if (this.activeFilter != 321) this.todos = this.todos.filter(el => el.active == this.activeFilter)
+        localStorage.setItem('dis', this.dis)
+        localStorage.setItem('dis2', this.dis2)
       }
     },
+
     deleteItem(index) {
       this.todos = JSON.parse(localStorage.getItem('todos'))
       this.todos = this.todos.filter(el => el.id != index)
+      if (this.todos.find(el => el.active == true)) this.dis = false
+      else this.dis = true
+      if (this.todos.find(el => el.active == false)) this.dis2 = false
+      else this.dis2 = true
       localStorage.setItem('todos', JSON.stringify(this.todos))
-      // if (this.activeFilter == 1) {
-      //   this.todos = this.todos.filter(el => el.active == false)
-      //   if (this.todos.length == 0) {
-      //     this.todos = JSON.parse(localStorage.getItem('todos'))
-      //     this.activeFilter = 0
-      //   }
-      // }
-      // else if (this.activeFilter == 2) {
-      //   this.todos = this.todos.filter(el => el.active == true)
-      //   if (this.todos.length == 0) {
-      //     this.activeFilter = 0
-      //     this.todos = JSON.parse(localStorage.getItem('todos'))
-      //   }
-      // }
+      localStorage.setItem('dis', this.dis)
+      localStorage.setItem('dis2', this.dis2)
+      this.filtration()
     },
+
     endedToDo(index) {
       this.todos = JSON.parse(localStorage.getItem('todos'))
       this.todos.forEach((el, i) => {
         if (el.id == index) {
           this.todos[i].active == false ? this.todos[i].active = true : this.todos[i].active = false
           localStorage.setItem('todos', JSON.stringify(this.todos))
-
-          // if (this.activeFilter == 1) {
-          //   this.todos = this.todos.filter(el => el.active == false)
-          //   if (this.todos.length == 0) {
-          //     this.todos = JSON.parse(localStorage.getItem('todos'))
-          //     this.activeFilter = 0
-          //   }
-          // }
-          // else if (this.activeFilter == 2) {
-          //   this.todos = this.todos.filter(el => el.active == true)
-          //   if (this.todos.length == 0) {
-          //     this.todos = JSON.parse(localStorage.getItem('todos'))
-          //     this.activeFilter = 0
-          //   }
-          // }
+          if (this.todos.find(el => el.active == true)) this.dis = false
+          else this.dis = true
+          if (this.todos.find(el => el.active == false)) this.dis2 = false
+          else this.dis2 = true
+          localStorage.setItem('dis', this.dis)
+          localStorage.setItem('dis2', this.dis2)
         }
       })
-      // if (this.todos.find(el => el.active == true))
-      //   this.dis = false
-      // else this.dis = true
-
-      // if (this.todos.find(el => el.active == false))
-      //   this.dis2 = false
-      // else this.dis2 = true
+      this.filtration()
     },
-    filter(x) {
-      this.todos = JSON.parse(localStorage.getItem('todos'))
-      let activeBtn = false
 
-      this.activeFilter = ''
-      if (x != 0) {
-        if (x == 1) {
-          this.activeFilter = false
-          activeBtn = true
-        } else if (x == 2) {
-          activeBtn = false
-          this.activeFilter = true
-        }
-        this.todos = this.todos.filter(el => el.active != activeBtn)
+    filtration() {
+      if (this.activeFilter != 321) this.todos = this.todos.filter(el => el.active == this.activeFilter)
+      if (this.todos.length == 0) {
+        this.todos = JSON.parse(localStorage.getItem('todos'))
+        this.activeFilter = 321
       }
     },
+
+    changeBtn(x) {
+      this.todos = JSON.parse(localStorage.getItem('todos'))
+
+      this.activeFilter = 321
+      if (x != 0) {
+        if (x == 1) this.activeFilter = false
+        else if (x == 2) this.activeFilter = true
+        this.todos = this.todos.filter(el => el.active == this.activeFilter)
+      }
+    },
+    
     clear() {
       if (this.activeFilter == true)
-        this.activeFilter = ''
+        this.activeFilter = 321
       this.todos = JSON.parse(localStorage.getItem('todos'))
       this.todos = this.todos.filter(el => el.active == false)
+      if (this.todos.find(el => el.active == true)) this.dis = false
+      else this.dis = true
+      if (this.todos.find(el => el.active == false)) this.dis2 = false
+      else this.dis2 = true
+      localStorage.setItem('dis', this.dis)
+      localStorage.setItem('dis2', this.dis2)
       localStorage.setItem('todos', JSON.stringify(this.todos))
     },
   }
@@ -166,6 +162,20 @@ export default {
       margin: 0 auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
 
+      &__todo-list {
+        max-height: 408px;
+        overflow: auto;
+
+        &::-webkit-scrollbar {
+          width: 5px;
+          background-color: white
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: #bcaaa4;
+          border-radius: 35px;
+        }
+      }
+
       &__input {
         border: none;
         width: 100%;
@@ -190,6 +200,10 @@ export default {
       &__todo-item {
         @include todos;
         display: flex;
+
+        &:last-child {
+          border-bottom: none;
+        }
 
         &__text {
           position: relative;
@@ -240,6 +254,12 @@ export default {
           border: 1px solid white;
           font-size: 20px;
 
+          &_disabled {
+            pointer-events: none;
+            cursor: pointer;
+            color: #9e9e9e;
+          }
+
           &:last-child {
             margin-right: 0px;
           }
@@ -247,19 +267,18 @@ export default {
           &_active {
             border-color: #616161;
           }
-        }
 
-        &__link {
-          cursor: pointer;
-          
-          &:hover {
-            text-decoration: underline;
+          &__clear {
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
       }
 
       &__footer {
         font-size: 20px;
+        border-top: 1px solid #bcaaa4;
       }
     }
   }

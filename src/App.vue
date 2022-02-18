@@ -15,10 +15,10 @@
         <div class="app__wrapper__todo-item__count">{{todos.length}} items left</div>
         <div class="app__wrapper__todo-item__filter">
           <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == 321}" @click="changeBtn(0)">All</button>
-          <button class="app__wrapper__todo-item__btn"  :class="{'app__wrapper__todo-item__btn_active':activeFilter == false, 'app__wrapper__todo-item__btn_disabled':dis2 == true}" @click="changeBtn(1)">Active</button>
-          <button class="app__wrapper__todo-item__btn"  :class="{'app__wrapper__todo-item__btn_active':activeFilter == true, 'app__wrapper__todo-item__btn_disabled':dis == true}" @click="changeBtn(2)">Completed</button>
+          <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == false, 'app__wrapper__todo-item__btn_disabled':dis2 == 1}" @click="changeBtn(1)">Active</button>
+          <button class="app__wrapper__todo-item__btn" :class="{'app__wrapper__todo-item__btn_active':activeFilter == true, 'app__wrapper__todo-item__btn_disabled':dis == 1}" @click="changeBtn(2)">Completed</button>
         </div>
-        <button class="app__wrapper__todo-item__btn app__wrapper__todo-item__btn__clear" :class="{'app__wrapper__todo-item__btn_disabled':dis == true}" @click="clear">Clear completed</button>
+        <button class="app__wrapper__todo-item__btn app__wrapper__todo-item__btn__clear" :class="{'app__wrapper__todo-item__btn_disabled':dis == 1}" @click="clear">Clear completed</button>
       </div>
     </div>
   </div>
@@ -33,14 +33,14 @@ export default {
       todo: '',
       todos: [],
       activeFilter: 321,
-      dis: false,
-      dis2: false
+      dis: 0,
+      dis2: 0
     }
   },
 
   mounted() {
-    if (localStorage.getItem('dis')) this.dis = localStorage.getItem('dis')
-    if (localStorage.getItem('dis2')) this.dis2 = localStorage.getItem('dis2')
+    if (localStorage.dis) this.dis = localStorage.dis
+    if (localStorage.dis2) this.dis2 = localStorage.dis2
     if (localStorage.getItem('todos')) this.todos = JSON.parse(localStorage.getItem('todos'))
   },
 
@@ -55,44 +55,50 @@ export default {
         })
         this.todo = ''
         localStorage.setItem('todos', JSON.stringify(this.todos))
-        if (this.todos.find(el => el.active == true)) this.dis = false
-        else this.dis = true
-        if (this.todos.find(el => el.active == false)) this.dis2 = false
-        else this.dis2 = true
+        this.todos.find(el => el.active == true) ? this.dis = 2 : this.dis = 1
+        this.todos.find(el => el.active == false) ? this.dis2 = 2 : this.dis2 = 1
         if (this.activeFilter != 321) this.todos = this.todos.filter(el => el.active == this.activeFilter)
-        localStorage.setItem('dis', this.dis)
-        localStorage.setItem('dis2', this.dis2)
+        localStorage.dis = this.dis
+        localStorage.dis2 = this.dis2
       }
-    },
-
-    deleteItem(index) {
-      this.todos = JSON.parse(localStorage.getItem('todos'))
-      this.todos = this.todos.filter(el => el.id != index)
-      if (this.todos.find(el => el.active == true)) this.dis = false
-      else this.dis = true
-      if (this.todos.find(el => el.active == false)) this.dis2 = false
-      else this.dis2 = true
-      localStorage.setItem('todos', JSON.stringify(this.todos))
-      localStorage.setItem('dis', this.dis)
-      localStorage.setItem('dis2', this.dis2)
-      this.filtration()
     },
 
     endedToDo(index) {
       this.todos = JSON.parse(localStorage.getItem('todos'))
       this.todos.forEach((el, i) => {
         if (el.id == index) {
-          this.todos[i].active == false ? this.todos[i].active = true : this.todos[i].active = false
-          localStorage.setItem('todos', JSON.stringify(this.todos))
-          if (this.todos.find(el => el.active == true)) this.dis = false
-          else this.dis = true
-          if (this.todos.find(el => el.active == false)) this.dis2 = false
-          else this.dis2 = true
-          localStorage.setItem('dis', this.dis)
-          localStorage.setItem('dis2', this.dis2)
+          this.todos[i].active = !this.todos[i].active
         }
       })
+      this.disableBtn()
+      // if (this.todos.find(el => el.id == index))
+      //   el.active == false ? el.active = true : el.active = false
+      // this.disableBtn()
       this.filtration()
+    },
+
+    deleteItem(index) {
+      this.todos = JSON.parse(localStorage.getItem('todos')).filter(el => el.id != index)
+      // this.todos = this.todos.filter(el => el.id != index)
+      this.disableBtn()
+      this.filtration()
+    },
+
+    clear() {
+      if (this.activeFilter == true) this.activeFilter = 321
+      this.todos = JSON.parse(localStorage.getItem('todos')).filter(el => el.active == false)
+      // this.todos = this.todos.filter(el => el.active == false)
+      this.disableBtn()
+    },
+
+    changeBtn(x) {
+      this.todos = JSON.parse(localStorage.getItem('todos'))
+      this.activeFilter = 321
+      if (x != 0) {
+        if (x == 1) this.activeFilter = false
+        else if (x == 2) this.activeFilter = true
+        this.todos = this.todos.filter(el => el.active == this.activeFilter)
+      }
     },
 
     filtration() {
@@ -103,28 +109,11 @@ export default {
       }
     },
 
-    changeBtn(x) {
-      this.todos = JSON.parse(localStorage.getItem('todos'))
-
-      this.activeFilter = 321
-      if (x != 0) {
-        if (x == 1) this.activeFilter = false
-        else if (x == 2) this.activeFilter = true
-        this.todos = this.todos.filter(el => el.active == this.activeFilter)
-      }
-    },
-    
-    clear() {
-      if (this.activeFilter == true)
-        this.activeFilter = 321
-      this.todos = JSON.parse(localStorage.getItem('todos'))
-      this.todos = this.todos.filter(el => el.active == false)
-      if (this.todos.find(el => el.active == true)) this.dis = false
-      else this.dis = true
-      if (this.todos.find(el => el.active == false)) this.dis2 = false
-      else this.dis2 = true
-      localStorage.setItem('dis', this.dis)
-      localStorage.setItem('dis2', this.dis2)
+    disableBtn() {
+      this.todos.find(el => el.active == true) ? this.dis = 2 : this.dis = 1
+      this.todos.find(el => el.active == false) ? this.dis2 = 2 : this.dis2 = 1
+      localStorage.dis = this.dis
+      localStorage.dis2 = this.dis2
       localStorage.setItem('todos', JSON.stringify(this.todos))
     },
   }

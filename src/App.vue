@@ -79,7 +79,6 @@ export default {
 
     deleteItem(index) {
       this.todos = JSON.parse(localStorage.getItem('todos')).filter(el => el.id != index)
-      // this.todos = this.todos.filter(el => el.id != index)
       this.disableBtn()
       this.filtration()
     },
@@ -87,7 +86,6 @@ export default {
     clear() {
       if (this.activeFilter == true) this.activeFilter = 321
       this.todos = JSON.parse(localStorage.getItem('todos')).filter(el => el.active == false)
-      // this.todos = this.todos.filter(el => el.active == false)
       this.disableBtn()
     },
 
@@ -134,15 +132,27 @@ export default {
     border-bottom: 1px solid #bcaaa4;
   }
   .app {
-    width: 100%;
+    // width: 100%;
     min-height: 100%;
     background-color: #e0e0e0;
     user-select: none;
+
+    @media(max-width: 710px) {
+      padding: 0 10px;
+    }
 
     &__header {
       font-size: 70px;
       text-align: center;
       color: #bcaaa4;
+
+      @media(max-width: 1024px) {
+        font-size: 50px;
+      }
+
+      @media(max-width: 480px) {
+        font-size: 37px;
+      }
     }
 
     &__wrapper {
@@ -195,8 +205,7 @@ export default {
         }
 
         &__text {
-          position: relative;
-          width: 540px;
+          width: auto;
 
           &_active {
             text-decoration: line-through;
@@ -228,9 +237,16 @@ export default {
 
         &__filter {
           display: flex;
-          margin-left: auto;
-          margin-right: auto;
+          margin: 0 auto;
           align-items: center;
+
+          @media(max-width: 561px) {
+            margin: 0;
+          }
+
+          @media(max-width: 411px) {
+            margin: 5px auto;
+          }
         }
 
         &__btn {
@@ -268,6 +284,8 @@ export default {
       &__footer {
         font-size: 20px;
         border-top: 1px solid #bcaaa4;
+        flex-wrap: wrap;
+        justify-content: space-around;
       }
     }
   }

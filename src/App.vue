@@ -126,13 +126,17 @@ export default {
   @mixin todos {
     padding: 10px 30px;
     color: #616161;
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 500;
     align-items: center;
     border-bottom: 1px solid #bcaaa4;
+
+    @media(max-width: 560px) {
+      font-size: 15px;
+      padding: 10px 15px;
+    }
   }
   .app {
-    // width: 100%;
     min-height: 100%;
     background-color: #e0e0e0;
     user-select: none;
@@ -142,16 +146,12 @@ export default {
     }
 
     &__header {
-      font-size: 70px;
+      font-size: 60px;
       text-align: center;
       color: #bcaaa4;
 
-      @media(max-width: 1024px) {
-        font-size: 50px;
-      }
-
-      @media(max-width: 480px) {
-        font-size: 37px;
+      @media(max-width: 560px) {
+        font-size: 35px;
       }
     }
 
@@ -162,7 +162,7 @@ export default {
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
 
       &__todo-list {
-        max-height: 408px;
+        max-height: 400px;
         overflow: auto;
 
         &::-webkit-scrollbar {
@@ -184,6 +184,10 @@ export default {
         border-bottom: 1px solid #bcaaa4;
         outline: none;
         color: #616161;
+
+        @media(max-width: 560px) {
+          font-size: 15px;
+        }
 
         &::placeholder {
           font-style: italic;
@@ -218,34 +222,49 @@ export default {
           margin-left: auto;
           cursor: pointer;
           font-size: 35px;
+
+          @media(max-width: 560px) {
+            font-size: 22px;
+          }
         }
         
         &__ended {
           margin-right: 20px;
           cursor: pointer;
-          height: 40px;
-          width: 40px;
+          min-height: 35px;
+          min-width: 35px;
           border-radius: 50%;
           border: 1px solid #bcaaa4;
-          text-align: center;
+          display: flex;
           color: white;
+          justify-content: center;
+          align-items: center;
+          font-size: 25px;
+
+          @media(max-width: 560px) {
+            min-height: 25px;
+            min-width: 25px;
+            font-size: 15px;
+          }
           
           &_active {
             color: #43a047;
           }
         }
 
+        &__count {
+          @media(max-width: 560px) {
+            font-size: 15px;
+          }
+        }
+
         &__filter {
           display: flex;
-          margin: 0 auto;
+          margin: 0;
           align-items: center;
 
-          @media(max-width: 561px) {
-            margin: 0;
-          }
-
-          @media(max-width: 411px) {
-            margin: 5px auto;
+          @media(max-width: 333px) {
+            margin: 5px 0;
           }
         }
 
@@ -258,6 +277,10 @@ export default {
           border: none;
           border: 1px solid white;
           font-size: 20px;
+
+          @media(max-width: 560px) {
+            font-size: 15px;
+          }
 
           &_disabled {
             pointer-events: none;
@@ -285,7 +308,11 @@ export default {
         font-size: 20px;
         border-top: 1px solid #bcaaa4;
         flex-wrap: wrap;
-        justify-content: space-around;
+        justify-content: space-between;
+
+        @media(max-width: 465px) {
+          justify-content: space-around;
+        }
       }
     }
   }
